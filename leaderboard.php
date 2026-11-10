@@ -1,8 +1,30 @@
 <?php
+
 require_once __DIR__ . '/session.php';
 require_login();
-?>
 
+$_SESSION['logout_token'] = $_SESSION['logout_token'] ?? bin2hex(random_bytes(32));
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $token = $_POST['logout_token'] ?? null;
+
+    if (!is_string($token) || !hash_equals($_SESSION['logout_token'], $token)) {
+        $error = 'Your sign-out form expired. Please try again.';
+    } else {
+        $_SESSION = array_intersect_key($_SESSION, ['leaderboard' => true]);
+
+        if (!session_regenerate_id(true)) {
+            http_response_code(500);
+            exit('The Last Ember could not renew your session. Please close this browser window.');
+        }
+
+        header('Location: login.php', true, 303);
+        exit;
+    }
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,9 +56,18 @@ require_login();
         <nav aria-label="Leaderboard options">
             <ul>
                 <li><a href="character.php">Back to character setup</a></li>
-                <li><a href="login.php">Back to sign in</a></li>
             </ul>
         </nav>
+
+        <?php if ($error !== ''): ?>
+            <p role="alert"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
+        <?php endif; ?>
+
+        <form method="post" action="leaderboard.php">
+            <input type="hidden" name="logout_token"
+                   value="<?= htmlspecialchars($_SESSION['logout_token'], ENT_QUOTES, 'UTF-8') ?>">
+            <button type="submit">Sign out</button>
+        </form>
     </main>
 </body>
 </html>
