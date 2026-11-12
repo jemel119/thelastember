@@ -21,9 +21,22 @@ if (isset($ending['choices'])) {
 }
 
 $hero = $_SESSION['hero'];
+$runId = $_SESSION['run_id'];
 $score = (int) ($_SESSION['score'] ?? 0);
 $choices = $_SESSION['choices_log'] ?? [];
 $alignment = ember_alignment($choices);
+
+$_SESSION['leaderboard'] = $_SESSION['leaderboard'] ?? [];
+
+if (!isset($_SESSION['leaderboard'][$runId])) {
+    $_SESSION['leaderboard'][$runId] = [
+        'username' => $_SESSION['user'],
+        'score' => $score,
+        'ending' => $ending['title'],
+        'order' => count($_SESSION['leaderboard']),
+    ];
+}
+
 $majorChoices = array_values(array_filter($choices, function (array $choice): bool {
     return ($choice['alignment'] ?? 0) !== 0;
 }));

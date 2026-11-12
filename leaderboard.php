@@ -24,6 +24,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$entries = array_values($_SESSION['leaderboard'] ?? []);
+
+usort($entries, function (array $first, array $second): int {
+    $byScore = $second['score'] <=> $first['score'];
+
+    return $byScore !== 0 ? $byScore : $first['order'] <=> $second['order'];
+});
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,9 +55,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td colspan="4">No scores yet. Complete an adventure to post your first score.</td>
-                </tr>
+                <?php if ($entries === []): ?>
+                    <tr>
+                        <td colspan="4">No scores yet. Complete an adventure to post your first score.</td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($entries as $index => $entry): ?>
+                        <tr>
+                            <td><?= $index + 1 ?></td>
+                            <td><?= htmlspecialchars($entry['username'], ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><?= (int) $entry['score'] ?></td>
+                            <td><?= htmlspecialchars($entry['ending'], ENT_QUOTES, 'UTF-8') ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </tbody>
         </table>
 
