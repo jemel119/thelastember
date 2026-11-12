@@ -3,6 +3,8 @@
 require_once __DIR__ . '/session.php';
 require_login();
 
+require_once __DIR__ . '/advisor.php';
+
 $story = require __DIR__ . '/story.php';
 $node = $_SESSION['node'] ?? '';
 
@@ -20,6 +22,12 @@ if (isset($ending['choices'])) {
 
 $hero = $_SESSION['hero'];
 $score = (int) ($_SESSION['score'] ?? 0);
+$choices = $_SESSION['choices_log'] ?? [];
+$alignment = ember_alignment($choices);
+$majorChoices = array_values(array_filter($choices, function (array $choice): bool {
+    return ($choice['alignment'] ?? 0) !== 0;
+}));
+$majorChoices = array_slice($majorChoices, -3);
 
 ?>
 <!DOCTYPE html>
@@ -39,16 +47,44 @@ $score = (int) ($_SESSION['score'] ?? 0);
             <dl>
                 <dt>Hero</dt>
                 <dd><?= htmlspecialchars($hero['name'], ENT_QUOTES, 'UTF-8') ?></dd>
-
                 <dt>Class</dt>
                 <dd><?= htmlspecialchars($hero['class'], ENT_QUOTES, 'UTF-8') ?></dd>
-
                 <dt>Health remaining</dt>
                 <dd><?= (int) $hero['health'] ?></dd>
-
                 <dt>Final story points</dt>
                 <dd><?= $score ?></dd>
             </dl>
+        </section>
+
+        <section aria-labelledby="summary-heading">
+            <h2 id="summary-heading">Story Advisor summary</h2>
+            <p>
+                You reached <?= htmlspecialchars($ending['title'], ENT_QUOTES, 'UTF-8') ?>
+                as a <?= htmlspecialchars($hero['class'], ENT_QUOTES, 'UTF-8') ?>.
+                Your choices gave you a final alignment score of <?= $alignment['score'] ?>
+                (<?= htmlspecialchars($alignment['label'], ENT_QUOTES, 'UTF-8') ?>).
+            </p>
+
+            <?php if ($majorChoices !== []): ?>
+                <h3>Recent choices that shaped your alignment</h3>
+                <ol>
+                    <?php foreach ($majorChoices as $choice): ?>
+                        <li>
+                            <?= htmlspecialchars($choice['label'], ENT_QUOTES, 'UTF-8') ?>
+                            (<?= sprintf('%+d', $choice['alignment']) ?>)
+                        </li>
+                    <?php endforeach; ?>
+                </ol>
+            <?php endif; ?>
+
+            <details>
+                <summary>See your full path</summary>
+                <ol>
+                    <?php foreach ($choices as $choice): ?>
+                        <li><?= htmlspecialchars($choice['label'], ENT_QUOTES, 'UTF-8') ?></li>
+                    <?php endforeach; ?>
+                </ol>
+            </details>
         </section>
 
         <nav aria-label="Ending options">

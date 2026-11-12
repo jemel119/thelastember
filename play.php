@@ -3,6 +3,8 @@
 require_once __DIR__ . '/session.php';
 require_login();
 
+require_once __DIR__ . '/advisor.php';
+
 $story = require __DIR__ . '/story.php';
 $node = $_SESSION['node'] ?? '';
 
@@ -77,6 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$alignment = ember_alignment($_SESSION['choices_log'] ?? []);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -106,6 +110,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </dl>
         </section>
 
+        <section aria-labelledby="advisor-heading">
+            <h2 id="advisor-heading">Story Advisor</h2>
+            <p><?= htmlspecialchars($alignment['hint'], ENT_QUOTES, 'UTF-8') ?></p>
+        </section>
+
         <?php if ($error !== ''): ?>
             <p role="alert"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
         <?php endif; ?>
@@ -120,16 +129,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <legend>Choose your path</legend>
 
                 <?php foreach ($scene['choices'] as $id => $choice): ?>
-                    <?php $requirement = choice_requirement($choice, $hero); ?>
+                    <?php
+                    $requirement = choice_requirement($choice, $hero);
+                    $preview = $requirement !== ''
+                        ? $requirement
+                        : ember_choice_preview($choice, $hero['health']);
+                    ?>
                     <p>
                         <button type="submit" name="choice"
                                 value="<?= htmlspecialchars($id, ENT_QUOTES, 'UTF-8') ?>"
+                                aria-describedby="preview-<?= htmlspecialchars($id, ENT_QUOTES, 'UTF-8') ?>"
                                 <?= $requirement !== '' ? 'disabled' : '' ?>>
                             <?= htmlspecialchars($choice['label'], ENT_QUOTES, 'UTF-8') ?>
                         </button>
-                        <?php if ($requirement !== ''): ?>
-                            <span><?= htmlspecialchars($requirement, ENT_QUOTES, 'UTF-8') ?></span>
-                        <?php endif; ?>
+                        <span id="preview-<?= htmlspecialchars($id, ENT_QUOTES, 'UTF-8') ?>">
+                            <?= htmlspecialchars($preview, ENT_QUOTES, 'UTF-8') ?>
+                        </span>
                     </p>
                 <?php endforeach; ?>
             </fieldset>
