@@ -1,8 +1,16 @@
 <?php
+
 require_once __DIR__ . '/session.php';
 require_login();
-?>
 
+if (!isset($_SESSION['hero'], $_SESSION['node'], $_SESSION['run_id'])) {
+    header('Location: character.php', true, 303);
+    exit;
+}
+
+$hero = $_SESSION['hero'];
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,8 +24,21 @@ require_login();
         <p>Beyond the ruined gate, a faint orange light flickers through a crack in the stone.</p>
 
         <section aria-labelledby="hero-heading">
-            <h2 id="hero-heading">Your hero</h2>
-            <p>Class, health, strength, and inventory will appear here after you create a hero.</p>
+            <h2 id="hero-heading"><?= htmlspecialchars($hero['name'], ENT_QUOTES, 'UTF-8') ?></h2>
+
+            <dl>
+                <dt>Class</dt>
+                <dd><?= htmlspecialchars($hero['class'], ENT_QUOTES, 'UTF-8') ?></dd>
+
+                <dt>Health</dt>
+                <dd><?= (int) $hero['health'] ?></dd>
+
+                <dt>Strength</dt>
+                <dd><?= (int) $hero['strength'] ?></dd>
+
+                <dt>Inventory</dt>
+                <dd><?= htmlspecialchars(implode(', ', $hero['inventory']), ENT_QUOTES, 'UTF-8') ?></dd>
+            </dl>
         </section>
 
         <form method="post" action="play.php">
