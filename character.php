@@ -3,6 +3,11 @@
 require_once __DIR__ . '/session.php';
 require_login();
 
+require_once __DIR__ . '/checkpoint.php';
+
+$story = require __DIR__ . '/story.php';
+$checkpoint = ember_get_checkpoint($story);
+
 $classes = [
     'warrior' => ['label' => 'Warrior', 'health' => 100, 'strength' => 30, 'item' => 'Sword'],
     'mage' => ['label' => 'Mage', 'health' => 75, 'strength' => 12, 'item' => 'Ward'],
@@ -22,6 +27,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!is_string($token) || !hash_equals($_SESSION['character_token'], $token)) {
         $error = 'Your character form expired. Please try again.';
+    } elseif (($_POST['action'] ?? null) === 'resume_checkpoint') {
+        if ($checkpoint === null) {
+            $error = 'There is no saved adventure available for this account.';
+        } else {
+            foreach (['node', 'hero', 'run_id', 'score', 'choices_log'] as $key) {
+                $_SESSION[$key] = $checkpoint[$key];
+            }
+
+            unset($_SESSION['choice_token'], $_SESSION['character_token']);
+
+            header('Location: play.php', true, 303);
+            exit;
+        }
     } elseif (preg_match("/\\A[A-Za-z][A-Za-z0-9 '\\-]{0,29}\\z/", $name) !== 1) {
         $error = 'Use 1–30 characters for your hero name. Start with a letter and use only letters, numbers, spaces, apostrophes, or hyphens.';
     } elseif (!isset($classes[$selectedClass])) {
@@ -68,6 +86,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if (isset($_SESSION['hero'])): ?>
             <p><a href="play.php">Return to your adventure</a></p>
             <p>Beginning a new adventure replaces your current run.</p>
+        <?php endif; ?>
+
+        <?php if ($checkpoint !== null): ?>
+            <form method="post" action="character.php">
+                <input type="hidden" name="character_token"
+                       value="<?= htmlspecialchars($_SESSION['character_token'], ENT_QUOTES, 'UTF-8') ?>">
+                <button type="submit" name="action" value="resume_checkpoint">
+                    Resume saved adventure
+                </button>
+            </form>
         <?php endif; ?>
 
         <form method="post" action="character.php">

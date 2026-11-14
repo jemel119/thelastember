@@ -12,7 +12,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!is_string($token) || !hash_equals($_SESSION['logout_token'], $token)) {
         $error = 'Your sign-out form expired. Please try again.';
     } else {
-        $_SESSION = array_intersect_key($_SESSION, ['leaderboard' => true]);
+        $_SESSION = array_intersect_key($_SESSION, [
+            'leaderboard' => true,
+            'checkpoint' => true,
+        ]);
 
         if (!session_regenerate_id(true)) {
             http_response_code(500);
