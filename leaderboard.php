@@ -41,6 +41,7 @@ usort($entries, function (array $first, array $second): int {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
     <title>Leaderboard | The Last Ember</title>
 </head>
 <body>

@@ -98,6 +98,7 @@ $alignment = ember_alignment($_SESSION['choices_log'] ?? []);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
     <title><?= htmlspecialchars($scene['title'], ENT_QUOTES, 'UTF-8') ?> | The Last Ember</title>
 </head>
 <body>
