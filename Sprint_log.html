@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sprint Log | The Last Ember</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        figure { margin: 1rem 0; }
+        figure img { display: block; max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>The Last Ember Sprint Log</h1>
+        <p>Jeremy Henry-Atohengbe · Sole developer</p>
+
+        <section>
+            <h2>Sprint 1: Repository and page structure</h2>
+            <p>I set up the repository and README, then built the six page
+                previews and connected their navigation.</p>
+        </section>
+
+        <section>
+            <h2>Sprint 2: Accounts and session protection</h2>
+            <p>I added registration, password verification, sign-out, and
+                access checks for signed-out visitors. Registration initially
+                failed because PHP could not write to the account folder.
+                Applying the permissions recommended by Codd support made
+                registration work.</p>
+        </section>
+
+        <section>
+            <h2>Sprint 3: Characters and branching story</h2>
+            <p>I added Warrior, Mage, and Rogue character creation, a
+                15-node story, and three endings. PHP checks strength and
+                inventory requirements before applying choices.</p>
+        </section>
+
+        <section>
+            <h2>Sprint 4: Advisor, leaderboard, and checkpoints</h2>
+            <p>I added consequence previews and alignment feedback based on
+                the player's choices. The session leaderboard records each
+                completed run once. Save and resume uses a cookie token linked
+                to a server-side checkpoint for the signed-in account.</p>
+        </section>
+
+        <section>
+            <h2>Sprint 5: Styling and Codd testing</h2>
+            <p>I added a shared stylesheet and tested the deployed game.
+                The account flow, class requirements, advisor feedback, all
+                three endings, score ordering, save and resume, mobile
+                layout, and keyboard checks passed.</p>
+
+            <figure>
+                <img src="screenshots/sprint-5-board.png"
+                     alt="Jira board showing completed Sprint 5 tasks">
+                <figcaption>Sprint 5 task status in Jira</figcaption>
+            </figure>
+            <figure>
+                <img src="screenshots/mobile-story.png"
+                     alt="The Last Ember story scene in a narrow browser viewport">
+                <figcaption>Story screen at mobile width</figcaption>
+            </figure>
+            <figure>
+                <img src="screenshots/ranked-leaderboard.png"
+                     alt="Session leaderboard with scores in descending order">
+                <figcaption>Completed runs ranked by story points</figcaption>
+            </figure>
+        </section>
+
+        <section>
+            <h2>Sprint 6 — Documentation and submission</h2>
+            <p>In progress. I am assembling the sprint evidence, Development
+                Journal, project report, demo recording, and submission links.</p>
+        </section>
+
+        <p><a href="login.php">Return to The Last Ember</a></p>
+    </main>
+</body>
+</html>
